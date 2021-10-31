@@ -9,7 +9,7 @@ namespace Lab1
 
         private readonly Queue<TaskDelegate> _tasks = new();
         private Thread[] _threadPool;
-        private volatile bool isStopped;
+        private volatile bool isStopped;    
 
         public TaskQueue(int threadPoolSize)
         {
