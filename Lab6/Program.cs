@@ -7,13 +7,13 @@ namespace Lab6
     {
         static void Main(string[] args)
         {
-            var logBuffer = new LogBuffer("D:\\temp\\log.txt", 10, 5000);
-            for (int i = 0; i < 5; i++)
+            var logBuffer = new LogBuffer("/home/anton/Documents/log.txt", 10, 5000);
+            for (int i = 0; i < 100; i++)
             {
                 logBuffer.Add(i.ToString());
             }
-            
-            Thread.Sleep(30000);
+
+            logBuffer.Dispose();
         }
     }
 }

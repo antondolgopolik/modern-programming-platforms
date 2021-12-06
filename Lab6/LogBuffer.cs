@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lab6
 {
@@ -29,9 +30,9 @@ namespace Lab6
         public void Add(string item)
         {
             _buffer.Enqueue(item);
-            if (_buffer.Count == _bufferSize)
+            if (_buffer.Count >= _bufferSize)
             {
-                new Thread(Flush).Start();
+                new Task(Flush).Start();
             }
         }
 
@@ -43,11 +44,17 @@ namespace Lab6
                 Monitor.TryEnter(_writer, ref lockTaken);
                 if (lockTaken)
                 {
+                    if (_isDisposed)
+                    {
+                        throw new ObjectDisposedException("LogBuffer");
+                    }
+                    
                     while (!_buffer.IsEmpty)
                     {
                         _buffer.TryDequeue(out var message);
                         _writer.WriteLine(message);
                     }
+
                     _writer.Flush();
                 }
             }
@@ -64,9 +71,13 @@ namespace Lab6
         {
             if (!_isDisposed)
             {
-                _writer.Close();
                 _timer.Dispose();
-                _isDisposed = true;
+                Flush();
+                lock (_writer)
+                {
+                    _writer.Close();
+                    _isDisposed = true;
+                }
             }
         }
     }

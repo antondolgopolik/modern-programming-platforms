@@ -16,7 +16,7 @@ namespace Lab7
                 var info = new Tuple<TaskDelegate, ManualResetEvent, RefInt>(taskDelegate, mre, counter);
                 ThreadPool.QueueUserWorkItem(ThreadProc, info);
             }
-
+            
             mre.WaitOne();
         }
 
